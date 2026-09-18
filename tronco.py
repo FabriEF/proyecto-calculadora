@@ -7,6 +7,7 @@ class Interfaz(tk.Tk):
         self.geometry("450x650+700+200")
         self.attributes("-alpha",0.95)
         self.config(bg="black")
+        self.iconbitmap("icono_calculadora.ico")
         self.entrada_var = tk.StringVar()
         self.auxiliar = ""
         self.entrada_de_calculadora()
