@@ -14,12 +14,31 @@ class Interfaz(tk.Tk):
         self.botones_numerales()
         self.mainloop()
     
+    def validacion_punto(self,chars,caracteres):
+        indices = []
+        for e in caracteres:
+            indice = int(self.auxiliar.rfind(e))
+            indices.append(indice)
+        maximo = max(indices)
+        texto_max = self.auxiliar[maximo:-1]
+        texto_min = self.auxiliar[:]
+        print(f"maximo {maximo} y {texto_max}")
+        if "." not in texto_min:
+            print("Llego a A funcion")
+            self.auxiliar += chars
+            self.entrada_var.set(self.auxiliar)
+        elif "." not in texto_max and texto_max:
+            print("Llego a B funcion")
+            self.auxiliar += chars
+            self.entrada_var.set(self.auxiliar)
+    
     def mostrar_numeros(self,chars):
-        if chars in ["+","-","*","/"]:
+        caracteres = ["+","-","*","/"]
+        if chars in caracteres:
             try:
                 if self.auxiliar[-1] == chars:
                     pass
-                elif self.auxiliar[-1] in ["+","-","*","/"] and chars != self.auxiliar[-1]:
+                elif self.auxiliar[-1] in caracteres and chars != self.auxiliar[-1]:
                     self.auxiliar = self.auxiliar[0:-1]
                     self.auxiliar += chars
                     self.entrada_var.set(self.auxiliar)
@@ -32,23 +51,9 @@ class Interfaz(tk.Tk):
             if "." in self.auxiliar[-1]:
                 pass
             elif "." in self.auxiliar:
-                indices = []
-                for e in ["+","-","*","/"]:
-                    indice = int(self.auxiliar.rfind(e))
-                    indices.append(indice)
-                maximo = max(indices)
-                texto_max = self.auxiliar[maximo:-1]
-                texto_min = self.auxiliar[:]
-                if "." not in texto_min:
-                    self.auxiliar += chars
-                    self.entrada_var.set(self.auxiliar)
-                    print("primero")
-                elif "." not in texto_max and texto_max:
-                    self.auxiliar += chars
-                    self.entrada_var.set(self.auxiliar)
+                self.validacion_punto(chars,caracteres)
             else:
-                self.auxiliar += chars
-                self.entrada_var.set(self.auxiliar)
+                self.validacion_punto(chars,caracteres)
         else:
             self.auxiliar += chars
             self.entrada_var.set(self.auxiliar)
@@ -57,7 +62,7 @@ class Interfaz(tk.Tk):
         try:
             resultado = eval(self.auxiliar)
             self.entrada_var.set(resultado)
-            self.auxiliar = ""
+            self.auxiliar = str(resultado)
         except SyntaxError:
             self.entrada_var.set("")
             self.auxiliar = ""
