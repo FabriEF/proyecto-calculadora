@@ -18,17 +18,16 @@ class Interfaz(tk.Tk):
         indices = []
         for e in caracteres:
             indice = int(self.auxiliar.rfind(e))
-            indices.append(indice)
-        maximo = max(indices)
-        texto_max = self.auxiliar[maximo:-1]
-        texto_min = self.auxiliar[:]
-        print(f"maximo {maximo} y {texto_max}")
-        if "." not in texto_min:
-            print("Llego a A funcion")
-            self.auxiliar += chars
-            self.entrada_var.set(self.auxiliar)
-        elif "." not in texto_max and texto_max:
-            print("Llego a B funcion")
+            if indice != -1:
+                indices.append(indice)
+        if indices:
+            maximo = max(indices)
+            texto_max = self.auxiliar[maximo:]
+            contar_caracteres_despues_del_signo = len(texto_max)
+            if contar_caracteres_despues_del_signo >= 2 and "." not in texto_max:
+                self.auxiliar += chars
+                self.entrada_var.set(self.auxiliar)
+        elif "." not in self.auxiliar:
             self.auxiliar += chars
             self.entrada_var.set(self.auxiliar)
     
@@ -36,24 +35,29 @@ class Interfaz(tk.Tk):
         caracteres = ["+","-","*","/"]
         if chars in caracteres:
             try:
+                print(self.auxiliar[-1])
                 if self.auxiliar[-1] == chars:
+                    print("A")
                     pass
                 elif self.auxiliar[-1] in caracteres and chars != self.auxiliar[-1]:
+                    print("B")
                     self.auxiliar = self.auxiliar[0:-1]
                     self.auxiliar += chars
                     self.entrada_var.set(self.auxiliar)
-                else:
+                elif self.auxiliar[-1] != ".":
+                    print("C")
                     self.auxiliar += chars
                     self.entrada_var.set(self.auxiliar)
             except IndexError:
                 pass
         elif chars == ".":
-            if "." in self.auxiliar[-1]:
-                pass
-            elif "." in self.auxiliar:
-                self.validacion_punto(chars,caracteres)
-            else:
-                self.validacion_punto(chars,caracteres)
+            if self.auxiliar:
+                if "." in self.auxiliar[-1]:
+                    pass
+                elif "." in self.auxiliar:
+                    self.validacion_punto(chars,caracteres)
+                else:
+                    self.validacion_punto(chars,caracteres)
         else:
             self.auxiliar += chars
             self.entrada_var.set(self.auxiliar)
