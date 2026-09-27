@@ -1,2 +1,3 @@
 #Para ignorar los iconos o los archivos innecesarios
 *.ico
+__pycache__
