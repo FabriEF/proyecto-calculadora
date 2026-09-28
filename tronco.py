@@ -14,6 +14,22 @@ class Interfaz(tk.Tk):
         self.botones_numerales()
         self.mainloop()
         
+    validacion_y_logica = ValidacionesYLogica()
+    
+    def mostrado(self,chars):
+        self.auxiliar = self.validacion_y_logica.mostrar_numeros(chars,self.auxiliar)
+        self.entrada_var.set(self.auxiliar)
+    
+    def resultado(self):
+        self.auxiliar = self.validacion_y_logica.resultado(self.auxiliar)
+        self.entrada_var.set(self.auxiliar)
+    
+    def borrado(self,chars):
+        self.auxiliar = self.validacion_y_logica.borrar(chars,self.auxiliar)
+        self.entrada_var.set(self.auxiliar)
+        
+        
+    
     def entrada_de_calculadora(self):
         frame_entrada = tk.Frame(self)
         frame_entrada.grid(row=0,column=0,sticky="nsew")
@@ -39,11 +55,11 @@ class Interfaz(tk.Tk):
                 boton_de_la_calculadora = tk.Button(frame_botones,text=t,
                                                     bg="DarkOrange4",
                                                     relief="flat",bd=0,font=("Arial",15),
-                                                    fg="CadetBlue1",command=lambda :ValidacionesYLogica.resultado())
+                                                    fg="CadetBlue1",command=lambda: self.resultado())
             else:
                 boton_de_la_calculadora = tk.Button(frame_botones,text=t,bg="DarkOrange3",
                                                     relief="flat",bd=0,font=("Arial",15),
-                                                    fg="CadetBlue1",command=lambda e=t:ValidacionesYLogica.mostrar_numeros(e))
+                                                    fg="CadetBlue1",command=lambda e=t:self.mostrado(e))
             boton_de_la_calculadora.grid(row=r,column=c,padx=20,pady=20,sticky="nesw")
         botones_especiales = [("+",1,4),("-",1,3),("*",2,3),("/",0,4),("CE",3,3),("⌫",0,3),("()",2,4)]
         for t,r,c in botones_especiales:
@@ -51,101 +67,18 @@ class Interfaz(tk.Tk):
                 botones_especiales_calcu = tk.Button(frame_botones,text=t,
                                                  bg="DarkOrange4",
                                                  relief="flat",bd=0,font=("Arial",15),
-                                                 fg="CadetBlue1",command=lambda e=t:ValidacionesYLogica.borrar(e))
+                                                 fg="CadetBlue1",command=lambda e=t:self.borrado(e))
             elif t == "⌫":
                 botones_especiales_calcu = tk.Button(frame_botones,text=t,
                                                     bg="DarkOrange4",
                                                     relief="flat",bd=0,font=("Arial",15),
-                                                    fg="CadetBlue1",command=lambda e=t:ValidacionesYLogica.borrar(e))
+                                                    fg="CadetBlue1",command=lambda e=t:self.borrado(e))
             else:
                 botones_especiales_calcu = tk.Button(frame_botones,text=t,
                                                                  bg="DarkOrange4",
                                                                  relief="flat",bd=0,font=("Arial",15),
-                                                                 fg="CadetBlue1",command=lambda e=t:ValidacionesYLogica.mostrar_numeros(e))
+                                                                 fg="CadetBlue1",command=lambda e=t:self.mostrado(e))
             botones_especiales_calcu.grid(row=r,column=c,padx=20,pady=20,sticky="nesw")
-
-
-class ValidacionesYLogica(Interfaz):
-    def validacion_punto(self,chars,caracteres):
-            indices = []
-            for e in caracteres:
-                indice = int(self.auxiliar.rfind(e))
-                if indice != -1:
-                    indices.append(indice)
-            if indices:
-                maximo = max(indices)
-                texto_max = self.auxiliar[maximo:]
-                contar_caracteres_despues_del_signo = len(texto_max)
-                if contar_caracteres_despues_del_signo >= 2 and "." not in texto_max:
-                    self.auxiliar += chars
-                    self.entrada_var.set(self.auxiliar)
-            elif "." not in self.auxiliar:
-                self.auxiliar += chars
-                self.entrada_var.set(self.auxiliar)
-        
-    def mostrar_numeros(self,chars):
-        caracteres = ["+","-","*","/"]
-        if chars in caracteres:
-            if self.auxiliar:
-                if self.auxiliar[-1] == chars:
-                    pass
-                elif self.auxiliar[-1] in caracteres and chars != self.auxiliar[-1]:
-                    self.auxiliar = self.auxiliar[0:-1]
-                    self.auxiliar += chars
-                    self.entrada_var.set(self.auxiliar)
-                elif self.auxiliar[-1] != ".":
-                    self.auxiliar += chars
-                    self.entrada_var.set(self.auxiliar)
-            elif chars == "-":
-                self.auxiliar += chars
-                self.entrada_var.set(self.auxiliar)
-        elif chars == ".":
-            if self.auxiliar:
-                if "." in self.auxiliar[-1]:
-                    pass
-                elif "." in self.auxiliar:
-                    self.validacion_punto(chars,caracteres)
-                else:
-                    self.validacion_punto(chars,caracteres)
-        elif chars == "()":
-            buscar_parentesis_izq = int(self.auxiliar.rfind("("))
-            buscar_parentesis_der = int(self.auxiliar.rfind(")"))
-            if self.auxiliar:
-                if buscar_parentesis_izq == -1:
-                    self.auxiliar += chars[0]
-                    self.entrada_var.set(self.auxiliar)
-                elif ")" not in self.auxiliar[buscar_parentesis_izq:]:
-                    self.auxiliar += chars[1]
-                    self.entrada_var.set(self.auxiliar)
-                elif "(" not in self.auxiliar[buscar_parentesis_der:]:
-                    self.auxiliar += chars[0]
-                    self.entrada_var.set(self.auxiliar)
-            else:
-                self.auxiliar += "-("
-                self.entrada_var.set(self.auxiliar)
-        else:
-            self.auxiliar += chars
-            self.entrada_var.set(self.auxiliar)
-    
-    def resultado(self):
-            try:
-                resultado = eval(self.auxiliar)
-                self.entrada_var.set(resultado)
-                self.auxiliar = str(resultado)
-            except SyntaxError:
-                self.entrada_var.set("")
-                self.auxiliar = ""
-            except ZeroDivisionError:
-                self.entrada_var.set("Numero indefinido")
-                self.auxiliar = ""
-        
-    def borrar(self,chars):
-        if chars == "CE":
-            self.entrada_var.set("")
-            self.auxiliar = ""
-        elif chars == "⌫":
-            self.auxiliar = self.auxiliar[:-1]
-            self.entrada_var.set(self.auxiliar)
 #Agregar parentesis
 #Agregar historial sqlite
 #Agregar operaciones con fracciones
